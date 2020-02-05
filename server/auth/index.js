@@ -1,6 +1,16 @@
 const express = require('express');
+const Joi = require('@hapi/joi');
 
 const router = express.Router();
+
+const schema = Joi.object({
+  username: Joi.string().regex(/(^[a-zA-Z0-9_]*$)/).min(2).max(30)
+    .required(),
+
+  password: Joi.string().min(10).required()
+
+})
+
 
 router.get('/', (req, res) => {
   res.json({
@@ -9,10 +19,11 @@ router.get('/', (req, res) => {
 })
 
 router.post('/signup', (req, res) => {
-  console.log('body', req.body);
-  res.json({
-    message: 'Signup occured'
-  })
+
+
+  const result = schema.validate(req.body)
+  res.json(result);
+
 })
 
 module.exports = router;
