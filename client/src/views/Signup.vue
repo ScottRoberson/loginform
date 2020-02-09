@@ -2,10 +2,14 @@
 
 <section>
   <h1>Signup</h1>
+  <div v-if = "signingUp">
+    <img src="../assets/pacman_loading.svg" alt="">
+  </div>
   <div v-if="errorMessage" class="alert alert-danger" role="alert">
   {{errorMessage}}
 </div>
-<form @submit.prevent="signup">
+<form 
+    v-if="!signingUp"        @submit.prevent="signup">
   <div class="form-group">
     <label for="username">Username</label>
     <input type="text"
@@ -53,6 +57,7 @@
 
 import Joi from '@hapi/joi';
 
+
 const SIGNUP_URL = 'http://localhost:5000/auth/signup';
 
 const schema = Joi.object({
@@ -65,6 +70,7 @@ const schema = Joi.object({
 
 export default {
   data: () => ({
+    signingUp:false,
     errorMessage: '',
     user: {
       username: '',
@@ -83,29 +89,35 @@ user:{
 
   methods: {
     signup() {
-        console.log('lets send to server');
-        const body = {
-          username:this.user.username,
-          password:this.user.password,
-        } 
-       fetch(SIGNUP_URL, {
-  method: 'POST',
-  body: JSON.stringify(body),
-  headers: {
-    'content-type': 'application/json',
+      const body = {
+        username:this.user.username,
+        password:this.user.password,
+        };
+      this.signingUp=true;
+      fetch(SIGNUP_URL, {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+        'content-type': 'application/json',
   },
 }).then(response => {
   if (response.ok) {
-    return response.json();
+      return response.json();
   }
-  return response.json().then(error => {
-    throw new Error(error.message);
+      return response.json().then(error => {
+      throw new Error(error.message);
   });
 }).then(user => {
-  console.log(user);
+    setTimeout(()=>{
+      this.signingUp = false;
+      this.$router.push('/login');
+    },1000)
 }).catch(error => {
-  console.log(error);
-})
+    setTimeout(()=>{
+      this.signingUp = false;
+      this.errorMessage='That username is already taken. Please choose another one';
+    },1000);
+      })
     }
   }
 }
