@@ -128,18 +128,18 @@ user:{
 
 
 //This code threw an error when submiting the form.
-// validUser() {
-//   if (this.user.password !== this.user.confirmPassword) {
-//     this.errorMessage = 'Passwords must match. 🙈';
-//      return false;
-//   }
-//   const result = schema.validate(this.user);
-//   if (result.error === null) {
-//     return true;
-//   }
-//   if(result.error.includes('username')){
-//     this.errorMessage ='Username is invalid 😭'
-//     }else{
-//       this.errorMessage = 'Password is invlaid 🙅‍♂️'
-//   }
-//   },
+validUser() {
+  // if (this.user.password !== this.user.confirmPassword) {
+  //   this.errorMessage = 'Passwords must match. 🙈';
+  //    return false;
+  // }
+  // const result = schema.validate(this.user);
+  // if (result.error === null) {
+  //   return true;
+  // }
+  // if(result.error.includes('username')){
+  //   this.errorMessage ='Username is invalid 😭'
+  //   }else{
+  //     this.errorMessage = 'Password is invlaid 🙅‍♂️'
+  // }
+  // },
