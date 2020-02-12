@@ -18,6 +18,25 @@ const schema = Joi.object({
   password: Joi.string().trim().min(10).required()
 })
 
+
+function createTokenSendResponse(user, res, next) {
+  const payload = {
+    _id: user._id,
+    username: user.username
+  };
+  jwt.sign(payload, process.env.TOKEN_SECRET, {
+    expiresIn: '1d'
+  }, (err, token) => {
+    if (err) {
+      respondError422(res, next);
+    } else {
+      res.json({
+        token
+      });
+    }
+  });
+}
+
 router.get('/', (req, res) => {
   res.json({
     message: 'Auth Route'
@@ -46,8 +65,7 @@ router.post('/signup', (req, res, next) => {
             password: hashedPassword
           };
           users.insert(newUser).then(insertedUser => {
-            delete insertedUser.password;
-            res.json(insertedUser);
+            createTokenSendResponse(insertedUser, res, next);
           });
         });
       }
@@ -75,22 +93,7 @@ router.post('/login', (req, res, next) => {
           .compare(req.body.password, user.password)
           .then(result => {
             if (result) {
-              //They sent the correct password!!!
-              const payload = {
-                _id: user._id,
-                username: user.username
-              };
-              jwt.sign(payload, process.env.TOKEN_SECRET, {
-                expiresIn: '1d'
-              }, (err, token) => {
-                if (err) {
-                  respondError422(res, next);
-                } else {
-                  res.json({
-                    token
-                  });
-                }
-              });
+              createTokenSendResponse(user, res, next);
             } else {
               respondError422(res, next);
             }
@@ -101,7 +104,6 @@ router.post('/login', (req, res, next) => {
     });
   } else {
     respondError422(res, next);
-
   }
 })
 
